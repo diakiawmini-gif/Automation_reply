@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0f172a">
     <title>AutoReply Pro - Facebook Comment Automation</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
@@ -11,49 +12,57 @@
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
                     colors: {
-                        primary: '#3b82f6',
-                        secondary: '#1e293b',
-                        accent: '#0ea5e9',
-                        success: '#10b981',
-                        warning: '#f59e0b',
-                        danger: '#ef4444',
+                        primary: '#3b82f6', secondary: '#1e293b', accent: '#0ea5e9',
+                        success: '#10b981', warning: '#f59e0b', danger: '#ef4444',
                     }
                 }
             }
         }
     </script>
     <style>
-        body { font-family: 'Inter', sans-serif; }
-        .sidebar-item:hover { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
-        .sidebar-item.active { background: rgba(59, 130, 246, 0.15); color: #3b82f6; border-right: 3px solid #3b82f6; }
+        body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+        .sidebar-item:hover { background: rgba(59,130,246,0.1); color: #3b82f6; }
+        .sidebar-item.active { background: rgba(59,130,246,0.15); color: #3b82f6; border-right: 3px solid #3b82f6; }
         .comment-card { transition: all 0.3s ease; }
-        .comment-card:hover { transform: translateY(-2px); box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1); }
+        .comment-card:hover { transform: translateY(-2px); box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); }
         .typing-indicator span { animation: blink 1.4s infinite; }
         .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
         .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
-        @keyframes blink { 0%, 100% { opacity: 0.2; } 50% { opacity: 1; } }
+        @keyframes blink { 0%,100% { opacity: 0.2; } 50% { opacity: 1; } }
         .fade-in { animation: fadeIn 0.5s ease-in; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .slide-in { animation: slideIn 0.3s ease-out; }
         @keyframes slideIn { from { transform: translateX(20px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-        .pulse-ring { animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite; }
-        @keyframes pulse-ring { 0% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); } 100% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); } }
-        .glass-effect { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); }
-        .gradient-text { background: linear-gradient(135deg, #3b82f6 0%, #0ea5e9 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        ::-webkit-scrollbar { width: 6px; }
+        .pulse-ring { animation: pulse-ring 2s cubic-bezier(0.215,0.61,0.355,1) infinite; }
+        @keyframes pulse-ring { 0% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(16,185,129,0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(16,185,129,0); } 100% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(16,185,129,0); } }
+        .glass-effect { background: rgba(30,41,59,0.7); backdrop-filter: blur(10px); }
+        ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: #0f172a; }
         ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+        .mobile-nav { display: none; }
+        @media (max-width: 768px) {
+            .desktop-sidebar { display: none !important; }
+            .main-content { margin-left: 0 !important; }
+            .mobile-nav { display: flex !important; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr) !important; }
+            .page-title-text { font-size: 1rem !important; }
+            .top-bar { padding: 0.75rem 1rem !important; }
+            .main-padding { padding: 1rem !important; }
+            .comment-avatar { width: 40px !important; height: 40px !important; }
+        }
+        .bottom-nav-item { transition: all 0.2s; }
+        .bottom-nav-item.active { color: #3b82f6; }
+        .bottom-nav-item.active i { transform: translateY(-2px); }
+        .touch-btn { min-height: 44px; min-width: 44px; }
     </style>
 <base target="_blank">
 </head>
-<body class="bg-slate-950 text-slate-200 min-h-screen">
-    <!-- Sidebar -->
-    <div class="fixed left-0 top-0 h-full w-64 bg-slate-900 border-r border-slate-800 z-50 flex flex-col">
+<body class="bg-slate-950 text-slate-200 min-h-screen pb-20 md:pb-0">
+
+    <!-- Desktop Sidebar -->
+    <div class="desktop-sidebar fixed left-0 top-0 h-full w-64 bg-slate-900 border-r border-slate-800 z-50 flex flex-col">
         <div class="p-6 border-b border-slate-800">
             <div class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center">
@@ -65,31 +74,24 @@
                 </div>
             </div>
         </div>
-
         <nav class="flex-1 p-4 space-y-1">
-            <a href="#dashboard" onclick="showSection('dashboard')" class="sidebar-item active flex items-center gap-3 px-4 py-3 rounded-lg transition-all">
-                <i class="fas fa-home w-5"></i>
-                <span>Dashboard</span>
+            <a href="#" onclick="showSection('dashboard'); return false;" class="sidebar-item active flex items-center gap-3 px-4 py-3 rounded-lg transition-all" data-section="dashboard">
+                <i class="fas fa-home w-5"></i><span>Dashboard</span>
             </a>
-            <a href="#comments" onclick="showSection('comments')" class="sidebar-item flex items-center gap-3 px-4 py-3 rounded-lg transition-all">
-                <i class="fas fa-comments w-5"></i>
-                <span>Comments</span>
-                <span id="pending-badge" class="ml-auto bg-blue-500 text-white text-xs px-2 py-0.5 rounded-full">5</span>
+            <a href="#" onclick="showSection('comments'); return false;" class="sidebar-item flex items-center gap-3 px-4 py-3 rounded-lg transition-all" data-section="comments">
+                <i class="fas fa-comments w-5"></i><span>Comments</span>
+                <span id="pending-badge-desktop" class="ml-auto bg-blue-500 text-white text-xs px-2 py-0.5 rounded-full">5</span>
             </a>
-            <a href="#history" onclick="showSection('history')" class="sidebar-item flex items-center gap-3 px-4 py-3 rounded-lg transition-all">
-                <i class="fas fa-history w-5"></i>
-                <span>Reply History</span>
+            <a href="#" onclick="showSection('history'); return false;" class="sidebar-item flex items-center gap-3 px-4 py-3 rounded-lg transition-all" data-section="history">
+                <i class="fas fa-history w-5"></i><span>History</span>
             </a>
-            <a href="#settings" onclick="showSection('settings')" class="sidebar-item flex items-center gap-3 px-4 py-3 rounded-lg transition-all">
-                <i class="fas fa-cog w-5"></i>
-                <span>Settings</span>
+            <a href="#" onclick="showSection('settings'); return false;" class="sidebar-item flex items-center gap-3 px-4 py-3 rounded-lg transition-all" data-section="settings">
+                <i class="fas fa-cog w-5"></i><span>Settings</span>
             </a>
-            <a href="#api-info" onclick="showSection('api-info')" class="sidebar-item flex items-center gap-3 px-4 py-3 rounded-lg transition-all">
-                <i class="fas fa-code w-5"></i>
-                <span>API Integration</span>
+            <a href="#" onclick="showSection('api-info'); return false;" class="sidebar-item flex items-center gap-3 px-4 py-3 rounded-lg transition-all" data-section="api-info">
+                <i class="fas fa-code w-5"></i><span>API Info</span>
             </a>
         </nav>
-
         <div class="p-4 border-t border-slate-800">
             <div class="bg-slate-800/50 rounded-lg p-4">
                 <div class="flex items-center gap-3 mb-2">
@@ -98,162 +100,205 @@
                     </div>
                     <div>
                         <p class="text-sm font-medium text-white">System Active</p>
-                        <p class="text-xs text-slate-400">Monitoring comments</p>
+                        <p class="text-xs text-slate-400">Monitoring</p>
                     </div>
                 </div>
-                <div class="mt-2 flex items-center gap-2">
+                <div class="flex items-center gap-2">
                     <div class="w-2 h-2 rounded-full bg-green-500 pulse-ring"></div>
-                    <span class="text-xs text-green-400">Live connection</span>
+                    <span class="text-xs text-green-400">Live</span>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Mobile Bottom Navigation -->
+    <div class="mobile-nav fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-slate-800 z-50 flex justify-around items-center py-2 px-1">
+        <a href="#" onclick="showSection('dashboard'); return false;" class="bottom-nav-item active flex flex-col items-center gap-1 py-2 px-3 rounded-lg text-slate-400" data-section="dashboard">
+            <i class="fas fa-home text-lg transition-transform"></i>
+            <span class="text-[10px]">Home</span>
+        </a>
+        <a href="#" onclick="showSection('comments'); return false;" class="bottom-nav-item flex flex-col items-center gap-1 py-2 px-3 rounded-lg text-slate-400 relative" data-section="comments">
+            <i class="fas fa-comments text-lg transition-transform"></i>
+            <span class="text-[10px]">Comments</span>
+            <span id="pending-badge-mobile" class="absolute top-1 right-1 w-4 h-4 bg-blue-500 text-white text-[9px] rounded-full flex items-center justify-center">5</span>
+        </a>
+        <a href="#" onclick="showSection('history'); return false;" class="bottom-nav-item flex flex-col items-center gap-1 py-2 px-3 rounded-lg text-slate-400" data-section="history">
+            <i class="fas fa-history text-lg transition-transform"></i>
+            <span class="text-[10px]">History</span>
+        </a>
+        <a href="#" onclick="showSection('settings'); return false;" class="bottom-nav-item flex flex-col items-center gap-1 py-2 px-3 rounded-lg text-slate-400" data-section="settings">
+            <i class="fas fa-cog text-lg transition-transform"></i>
+            <span class="text-[10px]">Settings</span>
+        </a>
+    </div>
+
     <!-- Main Content -->
-    <div class="ml-64 min-h-screen">
+    <div class="main-content md:ml-64 min-h-screen">
         <!-- Top Bar -->
-        <header class="sticky top-0 z-40 glass-effect border-b border-slate-800 px-8 py-4 flex items-center justify-between">
-            <div>
-                <h2 id="page-title" class="text-xl font-semibold text-white">Dashboard</h2>
-                <p class="text-sm text-slate-400">Manage your Facebook comment automation</p>
-            </div>
-            <div class="flex items-center gap-4">
-                <button onclick="refreshComments()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-sm transition-all flex items-center gap-2">
-                    <i class="fas fa-sync-alt"></i> Refresh
+        <header class="sticky top-0 z-40 glass-effect border-b border-slate-800 top-bar px-4 md:px-8 py-3 md:py-4 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <button onclick="toggleMobileMenu()" class="md:hidden w-10 h-10 flex items-center justify-center text-slate-400 hover:text-white touch-btn">
+                    <i class="fas fa-bars text-lg"></i>
                 </button>
-                <div class="flex items-center gap-3 bg-slate-800 rounded-lg px-4 py-2">
-                    <div class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white font-bold text-sm">
-                        A
-                    </div>
-                    <span class="text-sm font-medium">Admin</span>
+                <div>
+                    <h2 id="page-title" class="page-title-text text-lg md:text-xl font-semibold text-white">Dashboard</h2>
+                    <p class="text-xs md:text-sm text-slate-400 hidden sm:block">Manage your Facebook comment automation</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2 md:gap-4">
+                <button onclick="refreshComments()" class="touch-btn px-3 md:px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-sm transition-all flex items-center gap-2">
+                    <i class="fas fa-sync-alt"></i><span class="hidden sm:inline">Refresh</span>
+                </button>
+                <div class="flex items-center gap-2 md:gap-3 bg-slate-800 rounded-lg px-3 md:px-4 py-2">
+                    <div class="w-7 h-7 md:w-8 md:h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white font-bold text-xs">A</div>
+                    <span class="text-sm font-medium hidden sm:inline">Admin</span>
                 </div>
             </div>
         </header>
 
-        <main class="p-8">
+        <!-- Mobile Menu Overlay -->
+        <div id="mobile-menu-overlay" class="fixed inset-0 bg-black/60 z-50 hidden" onclick="toggleMobileMenu()"></div>
+        <div id="mobile-menu" class="fixed left-0 top-0 h-full w-72 bg-slate-900 border-r border-slate-800 z-50 transform -translate-x-full transition-transform duration-300 md:hidden">
+            <div class="p-6 border-b border-slate-800 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center">
+                        <i class="fas fa-robot text-white text-lg"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-bold text-lg text-white">AutoReply Pro</h1>
+                        <p class="text-xs text-slate-400">Facebook Automation</p>
+                    </div>
+                </div>
+                <button onclick="toggleMobileMenu()" class="text-slate-400 hover:text-white"><i class="fas fa-times text-xl"></i></button>
+            </div>
+            <nav class="p-4 space-y-1">
+                <a href="#" onclick="showSection('dashboard'); toggleMobileMenu(); return false;" class="sidebar-item active flex items-center gap-3 px-4 py-3 rounded-lg transition-all" data-section="dashboard">
+                    <i class="fas fa-home w-5"></i><span>Dashboard</span>
+                </a>
+                <a href="#" onclick="showSection('comments'); toggleMobileMenu(); return false;" class="sidebar-item flex items-center gap-3 px-4 py-3 rounded-lg transition-all" data-section="comments">
+                    <i class="fas fa-comments w-5"></i><span>Comments</span>
+                </a>
+                <a href="#" onclick="showSection('history'); toggleMobileMenu(); return false;" class="sidebar-item flex items-center gap-3 px-4 py-3 rounded-lg transition-all" data-section="history">
+                    <i class="fas fa-history w-5"></i><span>History</span>
+                </a>
+                <a href="#" onclick="showSection('settings'); toggleMobileMenu(); return false;" class="sidebar-item flex items-center gap-3 px-4 py-3 rounded-lg transition-all" data-section="settings">
+                    <i class="fas fa-cog w-5"></i><span>Settings</span>
+                </a>
+                <a href="#" onclick="showSection('api-info'); toggleMobileMenu(); return false;" class="sidebar-item flex items-center gap-3 px-4 py-3 rounded-lg transition-all" data-section="api-info">
+                    <i class="fas fa-code w-5"></i><span>API Info</span>
+                </a>
+            </nav>
+        </div>
+
+        <main class="main-padding p-4 md:p-8">
             <!-- Dashboard Section -->
-            <div id="dashboard-section" class="space-y-6">
-                <!-- Stats Cards -->
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                    <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
-                        <div class="flex items-center justify-between mb-4">
-                            <div class="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center">
-                                <i class="fas fa-inbox text-blue-400 text-xl"></i>
+            <div id="dashboard-section" class="space-y-4 md:space-y-6">
+                <div class="stats-grid grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
+                    <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 md:p-6">
+                        <div class="flex items-center justify-between mb-2 md:mb-4">
+                            <div class="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-blue-500/10 flex items-center justify-center">
+                                <i class="fas fa-inbox text-blue-400 text-lg md:text-xl"></i>
                             </div>
-                            <span class="text-xs text-slate-400">Today</span>
+                            <span class="text-[10px] md:text-xs text-slate-400">Today</span>
                         </div>
-                        <h3 class="text-2xl font-bold text-white" id="stat-total">12</h3>
-                        <p class="text-sm text-slate-400 mt-1">Total Comments</p>
+                        <h3 class="text-xl md:text-2xl font-bold text-white" id="stat-total">12</h3>
+                        <p class="text-xs md:text-sm text-slate-400 mt-1">Total Comments</p>
                     </div>
-                    <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
-                        <div class="flex items-center justify-between mb-4">
-                            <div class="w-12 h-12 rounded-xl bg-yellow-500/10 flex items-center justify-center">
-                                <i class="fas fa-clock text-yellow-400 text-xl"></i>
+                    <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 md:p-6">
+                        <div class="flex items-center justify-between mb-2 md:mb-4">
+                            <div class="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-yellow-500/10 flex items-center justify-center">
+                                <i class="fas fa-clock text-yellow-400 text-lg md:text-xl"></i>
                             </div>
-                            <span class="text-xs text-slate-400">Pending</span>
+                            <span class="text-[10px] md:text-xs text-slate-400">Pending</span>
                         </div>
-                        <h3 class="text-2xl font-bold text-white" id="stat-pending">5</h3>
-                        <p class="text-sm text-slate-400 mt-1">Awaiting Reply</p>
+                        <h3 class="text-xl md:text-2xl font-bold text-white" id="stat-pending">5</h3>
+                        <p class="text-xs md:text-sm text-slate-400 mt-1">Awaiting Reply</p>
                     </div>
-                    <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
-                        <div class="flex items-center justify-between mb-4">
-                            <div class="w-12 h-12 rounded-xl bg-green-500/10 flex items-center justify-center">
-                                <i class="fas fa-check-circle text-green-400 text-xl"></i>
+                    <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 md:p-6">
+                        <div class="flex items-center justify-between mb-2 md:mb-4">
+                            <div class="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-green-500/10 flex items-center justify-center">
+                                <i class="fas fa-check-circle text-green-400 text-lg md:text-xl"></i>
                             </div>
-                            <span class="text-xs text-slate-400">Completed</span>
+                            <span class="text-[10px] md:text-xs text-slate-400">Done</span>
                         </div>
-                        <h3 class="text-2xl font-bold text-white" id="stat-replied">7</h3>
-                        <p class="text-sm text-slate-400 mt-1">Replied</p>
+                        <h3 class="text-xl md:text-2xl font-bold text-white" id="stat-replied">7</h3>
+                        <p class="text-xs md:text-sm text-slate-400 mt-1">Replied</p>
                     </div>
-                    <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
-                        <div class="flex items-center justify-between mb-4">
-                            <div class="w-12 h-12 rounded-xl bg-purple-500/10 flex items-center justify-center">
-                                <i class="fas fa-bolt text-purple-400 text-xl"></i>
+                    <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 md:p-6">
+                        <div class="flex items-center justify-between mb-2 md:mb-4">
+                            <div class="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-purple-500/10 flex items-center justify-center">
+                                <i class="fas fa-bolt text-purple-400 text-lg md:text-xl"></i>
                             </div>
-                            <span class="text-xs text-slate-400">Avg Time</span>
+                            <span class="text-[10px] md:text-xs text-slate-400">Avg</span>
                         </div>
-                        <h3 class="text-2xl font-bold text-white">2.3s</h3>
-                        <p class="text-sm text-slate-400 mt-1">Response Time</p>
+                        <h3 class="text-xl md:text-2xl font-bold text-white">2.3s</h3>
+                        <p class="text-xs md:text-sm text-slate-400 mt-1">Response Time</p>
                     </div>
                 </div>
 
-                <!-- Quick Actions -->
-                <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
-                    <h3 class="text-lg font-semibold text-white mb-4">Quick Actions</h3>
-                    <div class="flex flex-wrap gap-4">
-                        <button onclick="showSection('comments'); autoReplyAll();" class="px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white rounded-xl font-medium transition-all flex items-center gap-2 shadow-lg shadow-blue-500/20">
-                            <i class="fas fa-magic"></i>
-                            Auto-Reply All Pending
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 md:p-6">
+                    <h3 class="text-base md:text-lg font-semibold text-white mb-4">Quick Actions</h3>
+                    <div class="flex flex-col sm:flex-row flex-wrap gap-3">
+                        <button onclick="showSection('comments'); setTimeout(autoReplyAll, 300);" class="touch-btn px-4 md:px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white rounded-xl font-medium transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20">
+                            <i class="fas fa-magic"></i><span>Auto-Reply All</span>
                         </button>
-                        <button onclick="showSection('settings')" class="px-6 py-3 bg-slate-800 hover:bg-slate-700 text-white rounded-xl font-medium transition-all flex items-center gap-2">
-                            <i class="fas fa-sliders-h"></i>
-                            Configure AI Settings
+                        <button onclick="showSection('settings')" class="touch-btn px-4 md:px-6 py-3 bg-slate-800 hover:bg-slate-700 text-white rounded-xl font-medium transition-all flex items-center justify-center gap-2">
+                            <i class="fas fa-sliders-h"></i><span>Configure AI</span>
                         </button>
-                        <button onclick="showSection('api-info')" class="px-6 py-3 bg-slate-800 hover:bg-slate-700 text-white rounded-xl font-medium transition-all flex items-center gap-2">
-                            <i class="fas fa-plug"></i>
-                            Connect Facebook API
+                        <button onclick="showSection('api-info')" class="touch-btn px-4 md:px-6 py-3 bg-slate-800 hover:bg-slate-700 text-white rounded-xl font-medium transition-all flex items-center justify-center gap-2">
+                            <i class="fas fa-plug"></i><span>Connect API</span>
                         </button>
                     </div>
                 </div>
 
-                <!-- Recent Activity -->
-                <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
-                    <h3 class="text-lg font-semibold text-white mb-4">Recent Activity</h3>
-                    <div id="recent-activity" class="space-y-3">
-                        <!-- Activity items will be populated here -->
-                    </div>
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 md:p-6">
+                    <h3 class="text-base md:text-lg font-semibold text-white mb-4">Recent Activity</h3>
+                    <div id="recent-activity" class="space-y-3"></div>
                 </div>
             </div>
 
             <!-- Comments Section -->
-            <div id="comments-section" class="hidden space-y-6">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-4">
-                        <div class="relative">
-                            <input type="text" id="search-comments" placeholder="Search comments..." 
-                                class="bg-slate-800 border border-slate-700 rounded-lg pl-10 pr-4 py-2 text-sm text-white placeholder-slate-400 focus:outline-none focus:border-blue-500 w-64">
-                            <i class="fas fa-search absolute left-3 top-2.5 text-slate-400"></i>
+            <div id="comments-section" class="hidden space-y-4 md:space-y-6">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2 md:gap-4 w-full sm:w-auto">
+                        <div class="relative w-full sm:w-auto">
+                            <input type="text" id="search-comments" placeholder="Search comments..." class="w-full sm:w-64 bg-slate-800 border border-slate-700 rounded-lg pl-10 pr-4 py-2.5 text-sm text-white placeholder-slate-400 focus:outline-none focus:border-blue-500">
+                            <i class="fas fa-search absolute left-3 top-3 text-slate-400"></i>
                         </div>
-                        <select id="filter-status" onchange="filterComments()" class="bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-sm text-white focus:outline-none focus:border-blue-500">
+                        <select id="filter-status" onchange="filterComments()" class="w-full sm:w-auto bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500">
                             <option value="all">All Comments</option>
                             <option value="pending">Pending</option>
                             <option value="replied">Replied</option>
                         </select>
                     </div>
-                    <button onclick="autoReplyAll()" id="auto-reply-all-btn" class="px-6 py-2.5 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white rounded-lg font-medium transition-all flex items-center gap-2 shadow-lg shadow-blue-500/20">
-                        <i class="fas fa-magic"></i>
-                        Auto-Reply All
+                    <button onclick="autoReplyAll()" id="auto-reply-all-btn" class="touch-btn w-full sm:w-auto px-4 md:px-6 py-2.5 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white rounded-lg font-medium transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20">
+                        <i class="fas fa-magic"></i><span>Auto-Reply All</span>
                     </button>
                 </div>
-
-                <div id="comments-container" class="space-y-4">
-                    <!-- Comments will be rendered here -->
-                </div>
+                <div id="comments-container" class="space-y-3 md:space-y-4"></div>
             </div>
 
             <!-- History Section -->
-            <div id="history-section" class="hidden space-y-6">
+            <div id="history-section" class="hidden space-y-4 md:space-y-6">
                 <div class="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
-                    <div class="p-6 border-b border-slate-800 flex items-center justify-between">
-                        <h3 class="text-lg font-semibold text-white">Reply History Log</h3>
-                        <button onclick="clearHistory()" class="text-sm text-red-400 hover:text-red-300 transition-colors">
-                            <i class="fas fa-trash-alt mr-1"></i> Clear History
+                    <div class="p-4 md:p-6 border-b border-slate-800 flex items-center justify-between">
+                        <h3 class="text-base md:text-lg font-semibold text-white">Reply History Log</h3>
+                        <button onclick="clearHistory()" class="text-sm text-red-400 hover:text-red-300 transition-colors touch-btn px-3 py-2">
+                            <i class="fas fa-trash-alt mr-1"></i><span class="hidden sm:inline">Clear</span>
                         </button>
                     </div>
                     <div class="overflow-x-auto">
-                        <table class="w-full">
+                        <table class="w-full min-w-[600px]">
                             <thead class="bg-slate-800/50">
                                 <tr>
-                                    <th class="text-left px-6 py-3 text-xs font-medium text-slate-400 uppercase">Time</th>
-                                    <th class="text-left px-6 py-3 text-xs font-medium text-slate-400 uppercase">User</th>
-                                    <th class="text-left px-6 py-3 text-xs font-medium text-slate-400 uppercase">Original Comment</th>
-                                    <th class="text-left px-6 py-3 text-xs font-medium text-slate-400 uppercase">AI Reply</th>
-                                    <th class="text-left px-6 py-3 text-xs font-medium text-slate-400 uppercase">Status</th>
+                                    <th class="text-left px-4 md:px-6 py-3 text-xs font-medium text-slate-400 uppercase">Time</th>
+                                    <th class="text-left px-4 md:px-6 py-3 text-xs font-medium text-slate-400 uppercase">User</th>
+                                    <th class="text-left px-4 md:px-6 py-3 text-xs font-medium text-slate-400 uppercase">Comment</th>
+                                    <th class="text-left px-4 md:px-6 py-3 text-xs font-medium text-slate-400 uppercase">Reply</th>
+                                    <th class="text-left px-4 md:px-6 py-3 text-xs font-medium text-slate-400 uppercase">Status</th>
                                 </tr>
                             </thead>
-                            <tbody id="history-table-body" class="divide-y divide-slate-800">
-                                <!-- History items will be rendered here -->
-                            </tbody>
+                            <tbody id="history-table-body" class="divide-y divide-slate-800"></tbody>
                         </table>
                     </div>
                     <div id="empty-history" class="p-12 text-center hidden">
@@ -266,21 +311,19 @@
             </div>
 
             <!-- Settings Section -->
-            <div id="settings-section" class="hidden space-y-6 max-w-3xl">
-                <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
-                    <h3 class="text-lg font-semibold text-white mb-6 flex items-center gap-2">
-                        <i class="fas fa-store text-blue-400"></i>
-                        Business Information
+            <div id="settings-section" class="hidden space-y-4 md:space-y-6 max-w-3xl">
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 md:p-6">
+                    <h3 class="text-base md:text-lg font-semibold text-white mb-4 md:mb-6 flex items-center gap-2">
+                        <i class="fas fa-store text-blue-400"></i>Business Information
                     </h3>
                     <div class="space-y-4">
                         <div>
                             <label class="block text-sm font-medium text-slate-300 mb-2">Business Name</label>
-                            <input type="text" id="business-name" value="Mang Inasal - SM Megamall" 
-                                class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-blue-500 transition-colors">
+                            <input type="text" id="business-name" value="Mang Inasal - SM Megamall" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors text-sm md:text-base">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-slate-300 mb-2">Business Type</label>
-                            <select id="business-type" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-blue-500 transition-colors">
+                            <select id="business-type" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors text-sm md:text-base">
                                 <option value="restaurant">Restaurant / Food</option>
                                 <option value="shop">Retail Shop</option>
                                 <option value="salon">Salon / Beauty</option>
@@ -292,21 +335,19 @@
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-slate-300 mb-2">Business Description</label>
-                            <textarea id="business-desc" rows="3" 
-                                class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-blue-500 transition-colors">We serve authentic Filipino grilled chicken and unlimited rice. Open daily from 10AM to 10PM. We also offer delivery and catering services for events.</textarea>
+                            <textarea id="business-desc" rows="3" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors text-sm md:text-base">We serve authentic Filipino grilled chicken and unlimited rice. Open daily from 10AM to 10PM. We also offer delivery and catering services for events.</textarea>
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
-                    <h3 class="text-lg font-semibold text-white mb-6 flex items-center gap-2">
-                        <i class="fas fa-palette text-purple-400"></i>
-                        AI Reply Settings
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 md:p-6">
+                    <h3 class="text-base md:text-lg font-semibold text-white mb-4 md:mb-6 flex items-center gap-2">
+                        <i class="fas fa-palette text-purple-400"></i>AI Reply Settings
                     </h3>
                     <div class="space-y-4">
                         <div>
                             <label class="block text-sm font-medium text-slate-300 mb-2">Reply Tone</label>
-                            <select id="reply-tone" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-blue-500 transition-colors">
+                            <select id="reply-tone" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors text-sm md:text-base">
                                 <option value="friendly">Friendly & Casual</option>
                                 <option value="formal">Formal & Professional</option>
                                 <option value="taglish">Taglish (Tagalog + English)</option>
@@ -316,7 +357,7 @@
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-slate-300 mb-2">Call to Action</label>
-                            <select id="cta-type" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-blue-500 transition-colors">
+                            <select id="cta-type" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors text-sm md:text-base">
                                 <option value="dm">DM us to order!</option>
                                 <option value="visit">Visit us today!</option>
                                 <option value="call">Call us to reserve!</option>
@@ -327,32 +368,30 @@
                         <div>
                             <label class="block text-sm font-medium text-slate-300 mb-2">OpenAI API Key</label>
                             <div class="relative">
-                                <input type="password" id="api-key" placeholder="sk-..." 
-                                    class="w-full bg-slate-800 border border-slate-700 rounded-lg pl-10 pr-4 py-2.5 text-white focus:outline-none focus:border-blue-500 transition-colors">
-                                <i class="fas fa-key absolute left-3 top-3 text-slate-400"></i>
+                                <input type="password" id="api-key" value="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" class="w-full bg-slate-800 border border-slate-700 rounded-lg pl-10 pr-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors text-sm md:text-base">
+                                <i class="fas fa-key absolute left-3 top-3.5 text-slate-400"></i>
                             </div>
-                            <p class="text-xs text-slate-500 mt-1">Your API key is stored locally and never shared.</p>
+                            <p class="text-xs text-slate-500 mt-1">Stored locally. Never shared.</p>
                         </div>
                         <div class="flex items-center gap-3 pt-2">
                             <label class="relative inline-flex items-center cursor-pointer">
                                 <input type="checkbox" id="auto-approve" class="sr-only peer">
                                 <div class="w-11 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
-                                <span class="ml-3 text-sm font-medium text-slate-300">Auto-approve replies (no manual review)</span>
+                                <span class="ml-3 text-sm font-medium text-slate-300">Auto-approve replies</span>
                             </label>
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
-                    <h3 class="text-lg font-semibold text-white mb-6 flex items-center gap-2">
-                        <i class="fas fa-shield-alt text-green-400"></i>
-                        Response Rules
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 md:p-6">
+                    <h3 class="text-base md:text-lg font-semibold text-white mb-4 md:mb-6 flex items-center gap-2">
+                        <i class="fas fa-shield-alt text-green-400"></i>Response Rules
                     </h3>
                     <div class="space-y-3">
                         <div class="flex items-center justify-between p-3 bg-slate-800/50 rounded-lg">
                             <div class="flex items-center gap-3">
                                 <i class="fas fa-heart text-pink-400"></i>
-                                <span class="text-sm text-slate-300">Thank customers for positive comments</span>
+                                <span class="text-sm text-slate-300">Thank for positive comments</span>
                             </div>
                             <label class="relative inline-flex items-center cursor-pointer">
                                 <input type="checkbox" checked class="sr-only peer">
@@ -362,7 +401,7 @@
                         <div class="flex items-center justify-between p-3 bg-slate-800/50 rounded-lg">
                             <div class="flex items-center gap-3">
                                 <i class="fas fa-exclamation-triangle text-yellow-400"></i>
-                                <span class="text-sm text-slate-300">Escalate complaints to human agent</span>
+                                <span class="text-sm text-slate-300">Escalate complaints to human</span>
                             </div>
                             <label class="relative inline-flex items-center cursor-pointer">
                                 <input type="checkbox" checked class="sr-only peer">
@@ -372,172 +411,132 @@
                         <div class="flex items-center justify-between p-3 bg-slate-800/50 rounded-lg">
                             <div class="flex items-center gap-3">
                                 <i class="fas fa-question-circle text-blue-400"></i>
-                                <span class="text-sm text-slate-300">Answer common questions automatically</span>
+                                <span class="text-sm text-slate-300">Answer common questions auto</span>
                             </div>
                             <label class="relative inline-flex items-center cursor-pointer">
                                 <input type="checkbox" checked class="sr-only peer">
-                                <div class="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-500"></div>
+                                <div class="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-500"></div>
                             </label>
                         </div>
                     </div>
                 </div>
 
                 <div class="flex justify-end">
-                    <button onclick="saveSettings()" class="px-8 py-3 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white rounded-xl font-medium transition-all shadow-lg shadow-blue-500/20">
-                        <i class="fas fa-save mr-2"></i> Save Settings
+                    <button onclick="saveSettings()" class="touch-btn w-full sm:w-auto px-6 md:px-8 py-3 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white rounded-xl font-medium transition-all shadow-lg shadow-blue-500/20">
+                        <i class="fas fa-save mr-2"></i>Save Settings
                     </button>
                 </div>
             </div>
 
             <!-- API Info Section -->
-            <div id="api-info-section" class="hidden space-y-6 max-w-4xl">
-                <div class="bg-gradient-to-br from-blue-900/50 to-slate-900 border border-blue-800/50 rounded-xl p-8">
+            <div id="api-info-section" class="hidden space-y-4 md:space-y-6 max-w-4xl">
+                <div class="bg-gradient-to-br from-blue-900/50 to-slate-900 border border-blue-800/50 rounded-xl p-6 md:p-8">
                     <div class="flex items-start gap-4">
-                        <div class="w-14 h-14 rounded-xl bg-blue-500/20 flex items-center justify-center flex-shrink-0">
-                            <i class="fab fa-facebook text-blue-400 text-2xl"></i>
+                        <div class="w-12 h-12 md:w-14 md:h-14 rounded-xl bg-blue-500/20 flex items-center justify-center flex-shrink-0">
+                            <i class="fab fa-facebook text-blue-400 text-xl md:text-2xl"></i>
                         </div>
                         <div>
-                            <h3 class="text-xl font-bold text-white mb-2">Facebook Graph API Integration</h3>
-                            <p class="text-slate-300 leading-relaxed">
-                                This dashboard is a simulation for demo purposes. To connect with real Facebook comments, 
-                                you'll need to integrate with the <strong>Facebook Graph API</strong>. Below is a guide 
-                                on how to set this up for production deployment.
-                            </p>
+                            <h3 class="text-lg md:text-xl font-bold text-white mb-2">Facebook Graph API Integration</h3>
+                            <p class="text-slate-300 text-sm md:text-base leading-relaxed">This dashboard is a simulation for demo purposes. To connect with real Facebook comments, integrate with the <strong>Facebook Graph API</strong>.</p>
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 space-y-6">
-                    <h3 class="text-lg font-semibold text-white flex items-center gap-2">
-                        <span class="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center text-blue-400 text-sm font-bold">1</span>
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 md:p-6 space-y-4 md:space-y-6">
+                    <h3 class="text-base md:text-lg font-semibold text-white flex items-center gap-2">
+                        <span class="w-7 h-7 md:w-8 md:h-8 rounded-lg bg-blue-500/20 flex items-center justify-center text-blue-400 text-xs md:text-sm font-bold">1</span>
                         Create a Facebook App
                     </h3>
-                    <div class="pl-10 space-y-2">
-                        <p class="text-slate-300">Go to <a href="https://developers.facebook.com/" target="_blank" class="text-blue-400 hover:underline">Facebook Developers</a> and create a new app.</p>
-                        <ul class="list-disc list-inside text-slate-400 text-sm space-y-1">
+                    <div class="pl-9 md:pl-10 space-y-2">
+                        <p class="text-slate-300 text-sm">Go to <a href="https://developers.facebook.com/" target="_blank" class="text-blue-400 hover:underline">Facebook Developers</a> and create a new app.</p>
+                        <ul class="list-disc list-inside text-slate-400 text-xs md:text-sm space-y-1">
                             <li>Select "Business" as the app type</li>
-                            <li>Add the "Pages Public Content Access" and "Pages Messaging" products</li>
+                            <li>Add "Pages Public Content Access" and "Pages Messaging"</li>
                             <li>Get your App ID and App Secret</li>
                         </ul>
                     </div>
                 </div>
 
-                <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 space-y-6">
-                    <h3 class="text-lg font-semibold text-white flex items-center gap-2">
-                        <span class="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center text-blue-400 text-sm font-bold">2</span>
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 md:p-6 space-y-4 md:space-y-6">
+                    <h3 class="text-base md:text-lg font-semibold text-white flex items-center gap-2">
+                        <span class="w-7 h-7 md:w-8 md:h-8 rounded-lg bg-blue-500/20 flex items-center justify-center text-blue-400 text-xs md:text-sm font-bold">2</span>
                         Get Page Access Token
                     </h3>
-                    <div class="pl-10 space-y-2">
-                        <p class="text-slate-300">Generate a Page Access Token with the following permissions:</p>
-                        <div class="bg-slate-950 rounded-lg p-4 font-mono text-sm">
-                            <span class="text-green-400">pages_read_engagement</span>, 
-                            <span class="text-green-400">pages_manage_posts</span>, 
-                            <span class="text-green-400">pages_read_user_content</span>
+                    <div class="pl-9 md:pl-10 space-y-2">
+                        <p class="text-slate-300 text-sm">Generate a Page Access Token with permissions:</p>
+                        <div class="bg-slate-950 rounded-lg p-3 md:p-4 font-mono text-xs md:text-sm overflow-x-auto">
+                            <span class="text-green-400">pages_read_engagement</span>, <span class="text-green-400">pages_manage_posts</span>, <span class="text-green-400">pages_read_user_content</span>
                         </div>
-                        <p class="text-slate-400 text-sm">Use the Graph API Explorer to generate a long-lived token.</p>
                     </div>
                 </div>
 
-                <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 space-y-6">
-                    <h3 class="text-lg font-semibold text-white flex items-center gap-2">
-                        <span class="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center text-blue-400 text-sm font-bold">3</span>
-                        Webhook Setup (Real-time Updates)
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 md:p-6 space-y-4 md:space-y-6">
+                    <h3 class="text-base md:text-lg font-semibold text-white flex items-center gap-2">
+                        <span class="w-7 h-7 md:w-8 md:h-8 rounded-lg bg-blue-500/20 flex items-center justify-center text-blue-400 text-xs md:text-sm font-bold">3</span>
+                        Webhook Setup
                     </h3>
-                    <div class="pl-10 space-y-2">
-                        <p class="text-slate-300">Set up a webhook to receive real-time comment notifications:</p>
-                        <div class="bg-slate-950 rounded-lg p-4 overflow-x-auto">
-                            <pre class="font-mono text-sm text-slate-300"><code>// Webhook endpoint (Node.js/Express example)
-app.post('/webhook/facebook', (req, res) => {
+                    <div class="pl-9 md:pl-10 space-y-2">
+                        <p class="text-slate-300 text-sm">Set up a webhook for real-time comment notifications:</p>
+                        <div class="bg-slate-950 rounded-lg p-3 md:p-4 overflow-x-auto">
+                            <pre class="font-mono text-xs md:text-sm text-slate-300"><code>app.post('/webhook/facebook', (req, res) => {
   const { entry } = req.body;
-
   entry.forEach(pageEntry => {
     pageEntry.changes.forEach(change => {
       if (change.value.item === 'comment') {
-        const comment = change.value;
-        // Process new comment
-        processComment(comment);
+        processComment(change.value);
       }
     });
   });
-
   res.sendStatus(200);
 });</code></pre>
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 space-y-6">
-                    <h3 class="text-lg font-semibold text-white flex items-center gap-2">
-                        <span class="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center text-blue-400 text-sm font-bold">4</span>
-        Fetch & Reply to Comments
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 md:p-6 space-y-4 md:space-y-6">
+                    <h3 class="text-base md:text-lg font-semibold text-white flex items-center gap-2">
+                        <span class="w-7 h-7 md:w-8 md:h-8 rounded-lg bg-blue-500/20 flex items-center justify-center text-blue-400 text-xs md:text-sm font-bold">4</span>
+                        Fetch & Reply
                     </h3>
-                    <div class="pl-10 space-y-2">
-                        <p class="text-slate-300">Use these Graph API endpoints in your backend:</p>
-                        <div class="bg-slate-950 rounded-lg p-4 overflow-x-auto">
-                            <pre class="font-mono text-sm text-slate-300"><code>// Fetch comments from a post
-GET /{post-id}/comments?access_token={PAGE_ACCESS_TOKEN}
+                    <div class="pl-9 md:pl-10 space-y-2">
+                        <p class="text-slate-300 text-sm">Use these Graph API endpoints:</p>
+                        <div class="bg-slate-950 rounded-lg p-3 md:p-4 overflow-x-auto">
+                            <pre class="font-mono text-xs md:text-sm text-slate-300"><code>GET /{post-id}/comments?access_token={TOKEN}
 
-// Reply to a comment (creates a reply comment)
 POST /{comment-id}/comments
-  ?message={AI_GENERATED_REPLY}
-  &access_token={PAGE_ACCESS_TOKEN}
-
-// Or reply directly to the post mentioning the user
-POST /{post-id}/comments
-  ?message=@{user-id} {AI_GENERATED_REPLY}
-  &access_token={PAGE_ACCESS_TOKEN}</code></pre>
+  ?message={AI_REPLY}&access_token={TOKEN}</code></pre>
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 space-y-6">
-                    <h3 class="text-lg font-semibold text-white flex items-center gap-2">
-                        <span class="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center text-blue-400 text-sm font-bold">5</span>
-                        Complete Backend Architecture
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 md:p-6 space-y-4 md:space-y-6">
+                    <h3 class="text-base md:text-lg font-semibold text-white flex items-center gap-2">
+                        <span class="w-7 h-7 md:w-8 md:h-8 rounded-lg bg-blue-500/20 flex items-center justify-center text-blue-400 text-xs md:text-sm font-bold">5</span>
+                        Production Architecture
                     </h3>
-                    <div class="pl-10 space-y-2">
-                        <div class="bg-slate-950 rounded-lg p-4 overflow-x-auto">
-                            <pre class="font-mono text-sm text-slate-300"><code>/* 
- * PRODUCTION ARCHITECTURE OVERVIEW
- * ================================
- * 
- * 1. Facebook Page → Webhook → Your Backend Server
- * 2. Your Backend:
- *    a. Receives webhook payload (new comment)
- *    b. Fetches comment details via Graph API
- *    c. Sends comment text to OpenAI API for reply generation
- *    d. Receives AI-generated reply
- *    e. Posts reply back to Facebook via Graph API
- *    f. Logs the interaction to database
- * 
- * 3. This Dashboard (Frontend):
- *    - Connects to your backend API
- *    - Displays real comments from Facebook
- *    - Shows AI-generated replies before sending
- *    - Provides manual override controls
- *    - Shows analytics and history
- * 
- * TECH STACK RECOMMENDATION:
- * - Backend: Node.js + Express or Python + FastAPI
- * - Database: PostgreSQL or MongoDB for logs
- * - Queue: Redis + Bull for handling webhooks
- * - Hosting: AWS, DigitalOcean, or Railway
- */</code></pre>
+                    <div class="pl-9 md:pl-10 space-y-2">
+                        <div class="bg-slate-950 rounded-lg p-3 md:p-4 overflow-x-auto">
+                            <pre class="font-mono text-xs md:text-sm text-slate-300"><code>/* PRODUCTION ARCHITECTURE */
+// 1. Facebook Page -> Webhook -> Your Backend
+// 2. Backend: Receive webhook -> Fetch comment 
+//    -> Send to OpenAI API -> Post reply to FB
+// 3. This Dashboard connects to your backend API
+// Tech: Node.js/Express + PostgreSQL + Redis</code></pre>
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-yellow-900/20 border border-yellow-800/50 rounded-xl p-6">
+                <div class="bg-yellow-900/20 border border-yellow-800/50 rounded-xl p-4 md:p-6">
                     <div class="flex items-start gap-3">
                         <i class="fas fa-info-circle text-yellow-400 mt-1"></i>
                         <div>
                             <h4 class="font-semibold text-yellow-400 mb-1">Important Notes</h4>
-                            <ul class="text-slate-300 text-sm space-y-1 list-disc list-inside">
+                            <ul class="text-slate-300 text-xs md:text-sm space-y-1 list-disc list-inside">
                                 <li>Facebook requires Business Verification for some permissions</li>
-                                <li>Rate limits apply: 200 calls/hour per user for comments</li>
+                                <li>Rate limits: 200 calls/hour per user for comments</li>
                                 <li>Always handle errors gracefully and implement retry logic</li>
-                                <li>Store tokens securely (use environment variables, never commit to git)</li>
-                                <li>Consider using a message queue (Redis/Bull) for high-volume pages</li>
+                                <li>Store tokens securely (environment variables only)</li>
+                                <li>Use Redis/Bull message queue for high-volume pages</li>
                             </ul>
                         </div>
                     </div>
@@ -546,143 +545,118 @@ POST /{post-id}/comments
         </main>
     </div>
 
-    <!-- Toast Notification -->
-    <div id="toast" class="fixed bottom-6 right-6 bg-slate-800 border border-slate-700 text-white px-6 py-3 rounded-xl shadow-2xl transform translate-y-20 opacity-0 transition-all duration-300 flex items-center gap-3 z-50">
+    <!-- Toast -->
+    <div id="toast" class="fixed bottom-24 md:bottom-6 right-4 md:right-6 bg-slate-800 border border-slate-700 text-white px-4 md:px-6 py-3 rounded-xl shadow-2xl transform translate-y-20 opacity-0 transition-all duration-300 flex items-center gap-3 z-50 max-w-xs md:max-w-md">
         <i id="toast-icon" class="fas fa-check-circle text-green-400"></i>
-        <span id="toast-message">Operation successful</span>
+        <span id="toast-message" class="text-sm">Operation successful</span>
     </div>
 
     <script>
+
         // ============================================
-        // STATE MANAGEMENT
+        // STATE
         // ============================================
+        const OPENAI_API_KEY = "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";
+
         let comments = [
-            {
-                id: 1,
-                user: "Maria Santos",
-                avatar: "https://ui-avatars.com/api/?name=Maria+Santos&background=random",
-                text: "Ang sarap ng chicken inasal niyo! Pwede bang magpa-deliver sa Makati?",
-                time: "2 minutes ago",
-                status: "pending",
-                sentiment: "positive",
-                reply: null,
-                postTitle: "New Unlimited Rice Promo!"
-            },
-            {
-                id: 2,
-                user: "John Dela Cruz",
-                avatar: "https://ui-avatars.com/api/?name=John+Dela+Cruz&background=random",
-                text: "I waited 45 minutes for my order. Your service is getting worse. Very disappointed.",
-                time: "15 minutes ago",
-                status: "pending",
-                sentiment: "negative",
-                reply: null,
-                postTitle: "Weekend Special Menu"
-            },
-            {
-                id: 3,
-                user: "Angela Reyes",
-                avatar: "https://ui-avatars.com/api/?name=Angela+Reyes&background=random",
-                text: "What are your operating hours on Sundays? And do you accept GCash payments?",
-                time: "32 minutes ago",
-                status: "pending",
-                sentiment: "neutral",
-                reply: null,
-                postTitle: "New Branch Opening"
-            },
-            {
-                id: 4,
-                user: "Carlos Mendoza",
-                avatar: "https://ui-avatars.com/api/?name=Carlos+Mendoza&background=random",
-                text: "Best inasal in town! The pecho with unlimited rice is unbeatable. Keep it up! 🔥",
-                time: "1 hour ago",
-                status: "pending",
-                sentiment: "positive",
-                reply: null,
-                postTitle: "Customer Appreciation Day"
-            },
-            {
-                id: 5,
-                user: "Patricia Lim",
-                avatar: "https://ui-avatars.com/api/?name=Patricia+Lim&background=random",
-                text: "Do you have vegetarian options? My friend is coming and she doesn't eat meat.",
-                time: "2 hours ago",
-                status: "pending",
-                sentiment: "neutral",
-                reply: null,
-                postTitle: "Weekend Special Menu"
-            },
-            {
-                id: 6,
-                user: "Ramon Garcia",
-                avatar: "https://ui-avatars.com/api/?name=Ramon+Garcia&background=random",
-                text: "The rice was undercooked and the chicken was dry. Not worth the price anymore.",
-                time: "3 hours ago",
-                status: "pending",
-                sentiment: "negative",
-                reply: null,
-                postTitle: "New Unlimited Rice Promo!"
-            },
-            {
-                id: 7,
-                user: "Sophia Tan",
-                avatar: "https://ui-avatars.com/api/?name=Sophia+Tan&background=random",
-                text: "Love the new branch at BGC! The ambiance is so nice and staff are very accommodating.",
-                time: "4 hours ago",
-                status: "replied",
-                sentiment: "positive",
-                reply: "Thank you so much, Sophia! We're thrilled you enjoyed our new BGC branch! Our team works hard to make every visit special. See you again soon! 🎉",
-                postTitle: "New Branch Opening"
-            },
-            {
-                id: 8,
-                user: "Miguel Cruz",
-                avatar: "https://ui-avatars.com/api/?name=Miguel+Cruz&background=random",
-                text: "May promo pa ba kayo for group orders? We're planning a team lunch for 20 people.",
-                time: "5 hours ago",
-                status: "replied",
-                sentiment: "neutral",
-                reply: "Hi Miguel! Yes, we have group meal packages perfect for your team lunch! For 20 people, we recommend our Party Tray bundles. Please DM us for special rates and reservation! 🎊",
-                postTitle: "Weekend Special Menu"
-            }
+            { id: 1, user: "Maria Santos", avatar: "https://ui-avatars.com/api/?name=Maria+Santos&background=random", text: "Ang sarap ng chicken inasal niyo! Pwede bang magpa-deliver sa Makati?", time: "2 min ago", status: "pending", sentiment: "positive", reply: null, postTitle: "New Unlimited Rice Promo!" },
+            { id: 2, user: "John Dela Cruz", avatar: "https://ui-avatars.com/api/?name=John+Dela+Cruz&background=random", text: "I waited 45 minutes for my order. Your service is getting worse. Very disappointed.", time: "15 min ago", status: "pending", sentiment: "negative", reply: null, postTitle: "Weekend Special Menu" },
+            { id: 3, user: "Angela Reyes", avatar: "https://ui-avatars.com/api/?name=Angela+Reyes&background=random", text: "What are your operating hours on Sundays? And do you accept GCash payments?", time: "32 min ago", status: "pending", sentiment: "neutral", reply: null, postTitle: "New Branch Opening" },
+            { id: 4, user: "Carlos Mendoza", avatar: "https://ui-avatars.com/api/?name=Carlos+Mendoza&background=random", text: "Best inasal in town! The pecho with unlimited rice is unbeatable. Keep it up!", time: "1 hr ago", status: "pending", sentiment: "positive", reply: null, postTitle: "Customer Appreciation Day" },
+            { id: 5, user: "Patricia Lim", avatar: "https://ui-avatars.com/api/?name=Patricia+Lim&background=random", text: "Do you have vegetarian options? My friend is coming and she does not eat meat.", time: "2 hrs ago", status: "pending", sentiment: "neutral", reply: null, postTitle: "Weekend Special Menu" },
+            { id: 6, user: "Ramon Garcia", avatar: "https://ui-avatars.com/api/?name=Ramon+Garcia&background=random", text: "The rice was undercooked and the chicken was dry. Not worth the price anymore.", time: "3 hrs ago", status: "pending", sentiment: "negative", reply: null, postTitle: "New Unlimited Rice Promo!" },
+            { id: 7, user: "Sophia Tan", avatar: "https://ui-avatars.com/api/?name=Sophia+Tan&background=random", text: "Love the new branch at BGC! The ambiance is so nice and staff are very accommodating.", time: "4 hrs ago", status: "replied", sentiment: "positive", reply: "Thank you so much, Sophia! We are thrilled you enjoyed our new BGC branch! Our team works hard to make every visit special. See you again soon!", postTitle: "New Branch Opening" },
+            { id: 8, user: "Miguel Cruz", avatar: "https://ui-avatars.com/api/?name=Miguel+Cruz&background=random", text: "May promo pa ba kayo for group orders? We are planning a team lunch for 20 people.", time: "5 hrs ago", status: "replied", sentiment: "neutral", reply: "Hi Miguel! Yes, we have group meal packages perfect for your team lunch! For 20 people, we recommend our Party Tray bundles. Please DM us for special rates and reservation!", postTitle: "Weekend Special Menu" }
         ];
 
         let replyHistory = [
-            {
-                time: "4 hours ago",
-                user: "Sophia Tan",
-                original: "Love the new branch at BGC! The ambiance is so nice and staff are very accommodating.",
-                reply: "Thank you so much, Sophia! We're thrilled you enjoyed our new BGC branch! Our team works hard to make every visit special. See you again soon! 🎉",
-                status: "sent"
-            },
-            {
-                time: "5 hours ago",
-                user: "Miguel Cruz",
-                original: "May promo pa ba kayo for group orders? We're planning a team lunch for 20 people.",
-                reply: "Hi Miguel! Yes, we have group meal packages perfect for your team lunch! For 20 people, we recommend our Party Tray bundles. Please DM us for special rates and reservation! 🎊",
-                status: "sent"
-            }
+            { time: "4 hrs ago", user: "Sophia Tan", original: "Love the new branch at BGC! The ambiance is so nice and staff are very accommodating.", reply: "Thank you so much, Sophia! We are thrilled you enjoyed our new BGC branch! Our team works hard to make every visit special. See you again soon!", status: "sent" },
+            { time: "5 hrs ago", user: "Miguel Cruz", original: "May promo pa ba kayo for group orders? We are planning a team lunch for 20 people.", reply: "Hi Miguel! Yes, we have group meal packages perfect for your team lunch! For 20 people, we recommend our Party Tray bundles. Please DM us for special rates and reservation!", status: "sent" }
         ];
 
-        let settings = {
-            businessName: "Mang Inasal - SM Megamall",
-            businessType: "restaurant",
-            businessDesc: "We serve authentic Filipino grilled chicken and unlimited rice. Open daily from 10AM to 10PM. We also offer delivery and catering services for events.",
-            tone: "friendly",
-            cta: "dm",
-            apiKey: "",
-            autoApprove: false
-        };
+        let settings = { businessName: "Mang Inasal - SM Megamall", businessType: "restaurant", businessDesc: "We serve authentic Filipino grilled chicken and unlimited rice. Open daily from 10AM to 10PM. We also offer delivery and catering services for events.", tone: "friendly", cta: "dm", apiKey: OPENAI_API_KEY, autoApprove: false };
+
+        let currentSection = 'dashboard';
 
         // ============================================
-        // AI REPLY GENERATION (SIMULATED)
+        // OPENAI API INTEGRATION
         // ============================================
-        // NOTE: In production, replace this with actual OpenAI API call:
-        // fetch('https://api.openai.com/v1/chat/completions', {
-        //   method: 'POST',
-        //   headers: { 'Authorization': 'Bearer ' + apiKey, 'Content-Type': 'application/json' },
-        //   body: JSON.stringify({ model: 'gpt-4', messages: [...] })
-        // })
+        async function callOpenAI(commentText, sentiment, businessName, businessType, businessDesc, tone, cta) {
+            const ctas = { dm: " DM us to order!", visit: " Visit us today!", call: " Call us to reserve!", website: " Check our website for more info!", none: "" };
+            const ctaText = ctas[cta] || ctas.dm;
+
+            const systemPrompt = "You are an AI assistant for " + businessName + ", a " + businessType + ". Business info: " + businessDesc + ". Generate a short, natural Facebook comment reply (max 2 sentences) in " + tone + " tone. Rules: If comment is positive: thank them warmly. If comment is negative: apologize sincerely and offer to make it right. If comment asks a question: answer based on business info. If you do not know the answer: invite them to DM. End with this call-to-action if relevant: " + ctaText + ". Keep it conversational and friendly. For Taglish tone: mix Tagalog and English naturally.";
+
+            try {
+                const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + OPENAI_API_KEY
+                    },
+                    body: JSON.stringify({
+                        model: 'gpt-4o-mini',
+                        messages: [
+                            { role: 'system', content: systemPrompt },
+                            { role: 'user', content: "Comment sentiment: " + sentiment + "\nComment: \"" + commentText + "\"\n\nGenerate a reply:" }
+                        ],
+                        max_tokens: 150,
+                        temperature: 0.7
+                    })
+                });
+
+                if (!response.ok) {
+                    const err = await response.json();
+                    throw new Error(err.error?.message || 'API error');
+                }
+
+                const data = await response.json();
+                let reply = data.choices[0].message.content.trim();
+
+                // Ensure CTA is included if not already
+                if (cta !== 'none' && !reply.toLowerCase().includes(ctaText.toLowerCase().replace('!', ''))) {
+                    reply += ctaText;
+                }
+
+                return reply;
+            } catch (error) {
+                console.error('OpenAI API Error:', error);
+                showToast('OpenAI Error: ' + error.message, 'error');
+                return generateLocalReply(commentText, sentiment, businessName, businessType, tone, ctaText);
+            }
+        }
+
+        function generateLocalReply(commentText, sentiment, businessName, businessType, tone, ctaText) {
+            const lowerComment = commentText.toLowerCase();
+            let reply = "";
+
+            if (sentiment === "positive") {
+                if (tone === "taglish") reply = "Salamat po sa pag-appreciate, " + businessName + " po ito! Natutuwa kami na nag-enjoy kayo. Sana bumalik po kayo ulit!" + ctaText;
+                else if (tone === "formal") reply = "Thank you for your kind words. We are delighted to hear that you enjoyed your experience with us. We look forward to serving you again." + ctaText;
+                else reply = "Thank you so much for the love! We are so happy you enjoyed it! Your support means everything to us. Come back soon!" + ctaText;
+            } else if (sentiment === "negative") {
+                if (tone === "taglish") reply = "Paumanhin po sa naging experience niyo. Hindi po ito ang standard na gusto namin ma-deliver. Paki-DM po ang details para maayos namin agad. Pasensya na po ulit." + ctaText;
+                else if (tone === "formal") reply = "We sincerely apologize for the inconvenience you experienced. This does not reflect our usual standards. Please allow us to make this right by contacting us directly." + ctaText;
+                else reply = "We are really sorry to hear about your experience. That is not the standard we strive for. We would love to make it up to you - please reach out so we can fix this right away." + ctaText;
+            } else {
+                if (lowerComment.includes("deliver") || lowerComment.includes("delivery")) {
+                    reply = tone === "taglish" ? "Yes po, nagde-deliver kami! Pwede po kayong mag-order via DM o tumawag sa amin. May delivery fee lang po depende sa location." + ctaText : "Yes, we do offer delivery! You can place your order via DM or by calling us directly. Delivery fees vary based on your location." + ctaText;
+                } else if (lowerComment.includes("hour") || lowerComment.includes("open") || lowerComment.includes("operating")) {
+                    reply = tone === "taglish" ? "Open po kami daily from 10AM to 10PM, including Sundays! Pwede po kayong pumunta anytime within those hours." + ctaText : "We are open daily from 10AM to 10PM, including Sundays! Feel free to visit us anytime during our operating hours." + ctaText;
+                } else if (lowerComment.includes("payment") || lowerComment.includes("gcash")) {
+                    reply = tone === "taglish" ? "Yes po, we accept GCash, Maya, credit cards, at cash payments! Very convenient po magbayar sa amin." + ctaText : "Yes, we accept GCash, Maya, credit cards, and cash payments! We offer multiple convenient payment options for you." + ctaText;
+                } else if (lowerComment.includes("vegetarian") || lowerComment.includes("vegan")) {
+                    reply = tone === "taglish" ? "Yes po, may vegetarian options kami! We have grilled vegetable skewers, ensaladang talong, at vegetable pancit. Perfect po para sa vegetarian friends niyo!" + ctaText : "Yes, we do have vegetarian options! We offer grilled vegetable skewers, eggplant salad, and vegetable pancit. Perfect for your vegetarian friends!" + ctaText;
+                } else if (lowerComment.includes("group") || lowerComment.includes("team") || lowerComment.includes("catering")) {
+                    reply = tone === "taglish" ? "Yes po, may group packages kami! Perfect for team lunches and events. We offer special rates for bulk orders. DM us lang po for the menu and pricing!" + ctaText : "Yes, we have group packages perfect for team lunches and events! We offer special rates for bulk orders. DM us for the menu and pricing details!" + ctaText;
+                } else if (lowerComment.includes("promo") || lowerComment.includes("discount")) {
+                    reply = tone === "taglish" ? "Yes po, may ongoing promos kami! Check our latest posts for current deals, o DM niyo lang po kami para sa exclusive offers." + ctaText : "Yes, we have ongoing promos! Check our latest posts for current deals, or DM us for exclusive offers." + ctaText;
+                } else {
+                    reply = tone === "taglish" ? "Salamat po sa message niyo! We would love to help you out. Paki-DM po sa amin para ma-assist namin kayo personally." + ctaText : tone === "formal" ? "Thank you for reaching out. We would be happy to assist you further. Please send us a direct message so we can address your inquiry personally." + ctaText : "Thanks for reaching out! We would love to help you with that. Send us a DM and we will get back to you right away!" + ctaText;
+                }
+            }
+            return reply;
+        }
 
         async function generateAIReply(commentText, sentiment) {
             const businessName = document.getElementById('business-name').value || settings.businessName;
@@ -690,132 +664,63 @@ POST /{post-id}/comments
             const tone = document.getElementById('reply-tone').value || settings.tone;
             const cta = document.getElementById('cta-type').value || settings.cta;
             const businessDesc = document.getElementById('business-desc').value || settings.businessDesc;
-
-            // Simulate API delay
-            await new Promise(resolve => setTimeout(resolve, 1500 + Math.random() * 1000));
-
-            const ctas = {
-                dm: " DM us to order!",
-                visit: " Visit us today!",
-                call: " Call us to reserve!",
-                website: " Check our website for more info!",
-                none: ""
-            };
-
-            const ctaText = ctas[cta] || ctas.dm;
-
-            // Generate contextual reply based on sentiment and content
-            let reply = "";
-            const lowerComment = commentText.toLowerCase();
-
-            if (sentiment === "positive") {
-                if (tone === "taglish") {
-                    reply = `Salamat po sa pag-appreciate, ${businessName} po ito! Natutuwa kami na nag-enjoy kayo. Sana bumalik po kayo ulit!${ctaText}`;
-                } else if (tone === "formal") {
-                    reply = `Thank you for your kind words. We are delighted to hear that you enjoyed your experience with us. We look forward to serving you again.${ctaText}`;
-                } else {
-                    reply = `Thank you so much for the love! We're so happy you enjoyed it! Your support means everything to us. Come back soon!${ctaText}`;
-                }
-            } else if (sentiment === "negative") {
-                if (tone === "taglish") {
-                    reply = `Paumanhin po sa naging experience niyo. Hindi po ito ang standard na gusto namin ma-deliver. Paki-DM po ang details para maayos namin agad. Pasensya na po ulit.${ctaText}`;
-                } else if (tone === "formal") {
-                    reply = `We sincerely apologize for the inconvenience you experienced. This does not reflect our usual standards. Please allow us to make this right by contacting us directly.${ctaText}`;
-                } else {
-                    reply = `We're really sorry to hear about your experience. That's not the standard we strive for. We'd love to make it up to you - please reach out so we can fix this right away.${ctaText}`;
-                }
-            } else {
-                // Neutral - answer questions
-                if (lowerComment.includes("deliver") || lowerComment.includes("delivery")) {
-                    if (tone === "taglish") {
-                        reply = `Yes po, nagde-deliver kami! Pwede po kayong mag-order via DM o tumawag sa amin. May delivery fee lang po depende sa location.${ctaText}`;
-                    } else {
-                        reply = `Yes, we do offer delivery! You can place your order via DM or by calling us directly. Delivery fees vary based on your location.${ctaText}`;
-                    }
-                } else if (lowerComment.includes("hour") || lowerComment.includes("open") || lowerComment.includes("operating")) {
-                    if (tone === "taglish") {
-                        reply = `Open po kami daily from 10AM to 10PM, including Sundays! Pwede po kayong pumunta anytime within those hours.${ctaText}`;
-                    } else {
-                        reply = `We're open daily from 10AM to 10PM, including Sundays! Feel free to visit us anytime during our operating hours.${ctaText}`;
-                    }
-                } else if (lowerComment.includes("payment") || lowerComment.includes("gcash")) {
-                    if (tone === "taglish") {
-                        reply = `Yes po, we accept GCash, Maya, credit cards, at cash payments! Very convenient po magbayar sa amin.${ctaText}`;
-                    } else {
-                        reply = `Yes, we accept GCash, Maya, credit cards, and cash payments! We offer multiple convenient payment options for you.${ctaText}`;
-                    }
-                } else if (lowerComment.includes("vegetarian") || lowerComment.includes("vegan")) {
-                    if (tone === "taglish") {
-                        reply = `Yes po, may vegetarian options kami! We have grilled vegetable skewers, ensaladang talong, at vegetable pancit. Perfect po para sa vegetarian friends niyo!${ctaText}`;
-                    } else {
-                        reply = `Yes, we do have vegetarian options! We offer grilled vegetable skewers, eggplant salad, and vegetable pancit. Perfect for your vegetarian friends!${ctaText}`;
-                    }
-                } else if (lowerComment.includes("group") || lowerComment.includes("team") || lowerComment.includes("catering")) {
-                    if (tone === "taglish") {
-                        reply = `Yes po, may group packages kami! Perfect for team lunches and events. We offer special rates for bulk orders. DM us lang po for the menu and pricing!${ctaText}`;
-                    } else {
-                        reply = `Yes, we have group packages perfect for team lunches and events! We offer special rates for bulk orders. DM us for the menu and pricing details!${ctaText}`;
-                    }
-                } else if (lowerComment.includes("promo") || lowerComment.includes("discount")) {
-                    if (tone === "taglish") {
-                        reply = `Yes po, may ongoing promos kami! Check our latest posts for current deals, o DM niyo lang po kami para sa exclusive offers.${ctaText}`;
-                    } else {
-                        reply = `Yes, we have ongoing promos! Check our latest posts for current deals, or DM us for exclusive offers.${ctaText}`;
-                    }
-                } else {
-                    if (tone === "taglish") {
-                        reply = `Salamat po sa message niyo! We'd love to help you out. Paki-DM po sa amin para ma-assist namin kayo personally.${ctaText}`;
-                    } else if (tone === "formal") {
-                        reply = `Thank you for reaching out. We would be happy to assist you further. Please send us a direct message so we can address your inquiry personally.${ctaText}`;
-                    } else {
-                        reply = `Thanks for reaching out! We'd love to help you with that. Send us a DM and we'll get back to you right away!${ctaText}`;
-                    }
-                }
-            }
-
-            return reply;
+            await new Promise(resolve => setTimeout(resolve, 800));
+            return await callOpenAI(commentText, sentiment, businessName, businessType, businessDesc, tone, cta);
         }
 
         // ============================================
         // UI FUNCTIONS
         // ============================================
         function showSection(section) {
-            // Hide all sections
-            document.getElementById('dashboard-section').classList.add('hidden');
-            document.getElementById('comments-section').classList.add('hidden');
-            document.getElementById('history-section').classList.add('hidden');
-            document.getElementById('settings-section').classList.add('hidden');
-            document.getElementById('api-info-section').classList.add('hidden');
+            currentSection = section;
+            ['dashboard','comments','history','settings','api-info'].forEach(s => {
+                document.getElementById(s + '-section').classList.add('hidden');
+            });
+            const el = document.getElementById(section + '-section');
+            el.classList.remove('hidden');
+            el.classList.add('fade-in');
 
-            // Show selected section
-            document.getElementById(section + '-section').classList.remove('hidden');
-            document.getElementById(section + '-section').classList.add('fade-in');
+            document.querySelectorAll('.desktop-sidebar .sidebar-item').forEach(item => {
+                item.classList.remove('active');
+                if (item.dataset.section === section) item.classList.add('active');
+            });
+            document.querySelectorAll('.mobile-nav .bottom-nav-item').forEach(item => {
+                item.classList.remove('active');
+                item.classList.add('text-slate-400');
+                if (item.dataset.section === section) {
+                    item.classList.add('active');
+                    item.classList.remove('text-slate-400');
+                }
+            });
+            document.querySelectorAll('#mobile-menu .sidebar-item').forEach(item => {
+                item.classList.remove('active');
+                if (item.dataset.section === section) item.classList.add('active');
+            });
 
-            // Update sidebar active state
-            document.querySelectorAll('.sidebar-item').forEach(item => item.classList.remove('active'));
-            event.currentTarget.classList.add('active');
-
-            // Update page title
-            const titles = {
-                'dashboard': 'Dashboard',
-                'comments': 'Facebook Comments',
-                'history': 'Reply History',
-                'settings': 'Settings',
-                'api-info': 'API Integration Guide'
-            };
+            const titles = { dashboard: 'Dashboard', comments: 'Comments', history: 'History', settings: 'Settings', 'api-info': 'API Guide' };
             document.getElementById('page-title').textContent = titles[section];
 
-            // Refresh data if needed
             if (section === 'comments') renderComments();
             if (section === 'history') renderHistory();
             if (section === 'dashboard') updateDashboard();
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            const overlay = document.getElementById('mobile-menu-overlay');
+            if (menu.classList.contains('-translate-x-full')) {
+                menu.classList.remove('-translate-x-full');
+                overlay.classList.remove('hidden');
+            } else {
+                menu.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            }
         }
 
         function renderComments() {
             const container = document.getElementById('comments-container');
             const filter = document.getElementById('filter-status').value;
             const search = document.getElementById('search-comments').value.toLowerCase();
-
             let filtered = comments.filter(c => {
                 if (filter !== 'all' && c.status !== filter) return false;
                 if (search && !c.text.toLowerCase().includes(search) && !c.user.toLowerCase().includes(search)) return false;
@@ -823,88 +728,44 @@ POST /{post-id}/comments
             });
 
             if (filtered.length === 0) {
-                container.innerHTML = `
-                    <div class="text-center py-12">
-                        <div class="w-16 h-16 rounded-full bg-slate-800 flex items-center justify-center mx-auto mb-4">
-                            <i class="fas fa-inbox text-slate-600 text-2xl"></i>
-                        </div>
-                        <p class="text-slate-400">No comments found</p>
-                    </div>
-                `;
+                container.innerHTML = '<div class="text-center py-12"><div class="w-16 h-16 rounded-full bg-slate-800 flex items-center justify-center mx-auto mb-4"><i class="fas fa-inbox text-slate-600 text-2xl"></i></div><p class="text-slate-400">No comments found</p></div>';
                 return;
             }
 
-            container.innerHTML = filtered.map(comment => `
-                <div class="comment-card bg-slate-900 border border-slate-800 rounded-xl p-6 ${comment.status === 'replied' ? 'opacity-75' : ''}" id="comment-${comment.id}">
-                    <div class="flex items-start gap-4">
-                        <img src="${comment.avatar}" alt="${comment.user}" class="w-12 h-12 rounded-full border-2 border-slate-700">
-                        <div class="flex-1 min-w-0">
-                            <div class="flex items-center justify-between mb-1">
-                                <div class="flex items-center gap-2">
-                                    <h4 class="font-semibold text-white">${comment.user}</h4>
-                                    <span class="text-xs text-slate-500">• ${comment.time}</span>
-                                    <span class="text-xs px-2 py-0.5 rounded-full ${comment.sentiment === 'positive' ? 'bg-green-500/20 text-green-400' : comment.sentiment === 'negative' ? 'bg-red-500/20 text-red-400' : 'bg-blue-500/20 text-blue-400'}">
-                                        ${comment.sentiment}
-                                    </span>
-                                </div>
-                                <span class="text-xs px-2 py-1 rounded-lg ${comment.status === 'replied' ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'}">
-                                    ${comment.status === 'replied' ? '<i class="fas fa-check mr-1"></i>Replied' : '<i class="fas fa-clock mr-1"></i>Pending'}
-                                </span>
-                            </div>
-                            <p class="text-slate-300 text-sm mb-2">${comment.text}</p>
-                            <p class="text-xs text-slate-500 mb-3">on: <span class="text-slate-400">${comment.postTitle}</span></p>
+            container.innerHTML = filtered.map(comment => {
+                let replyBox = '';
+                if (comment.reply) {
+                    replyBox = '<div class="bg-slate-800/50 border border-slate-700 rounded-lg p-3 md:p-4 mb-3"><div class="flex items-center gap-2 mb-2"><i class="fas fa-robot text-blue-400 text-xs"></i><span class="text-xs font-medium text-blue-400">AI Generated Reply</span></div><p class="text-xs md:text-sm text-slate-300">' + comment.reply + '</p></div>';
+                }
+                let buttons = '';
+                if (comment.status === 'pending') {
+                    buttons = '<button onclick="generateReply(' + comment.id + ')" id="btn-gen-' + comment.id + '" class="touch-btn px-3 md:px-4 py-2 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 rounded-lg text-xs md:text-sm font-medium transition-all flex items-center gap-2"><i class="fas fa-magic"></i> Generate</button>';
+                    if (comment.reply) {
+                        buttons += '<button onclick="sendReply(' + comment.id + ')" class="touch-btn px-3 md:px-4 py-2 bg-green-500/10 hover:bg-green-500/20 text-green-400 rounded-lg text-xs md:text-sm font-medium transition-all flex items-center gap-2"><i class="fas fa-paper-plane"></i> Send</button>';
+                    }
+                } else {
+                    buttons = '<button disabled class="touch-btn px-3 md:px-4 py-2 bg-slate-800 text-slate-500 rounded-lg text-xs md:text-sm font-medium cursor-not-allowed flex items-center gap-2"><i class="fas fa-check"></i> Replied</button>';
+                }
+                buttons += '<button onclick="deleteComment(' + comment.id + ')" class="touch-btn px-3 py-2 text-slate-500 hover:text-red-400 rounded-lg text-xs md:text-sm transition-all"><i class="fas fa-trash-alt"></i></button>';
 
-                            ${comment.reply ? `
-                                <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-4 mb-3">
-                                    <div class="flex items-center gap-2 mb-2">
-                                        <i class="fas fa-robot text-blue-400"></i>
-                                        <span class="text-xs font-medium text-blue-400">AI Generated Reply</span>
-                                    </div>
-                                    <p class="text-sm text-slate-300">${comment.reply}</p>
-                                </div>
-                            ` : ''}
-
-                            <div class="flex items-center gap-3">
-                                ${comment.status === 'pending' ? `
-                                    <button onclick="generateReply(${comment.id})" id="btn-gen-${comment.id}" class="px-4 py-2 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 rounded-lg text-sm font-medium transition-all flex items-center gap-2">
-                                        <i class="fas fa-magic"></i> Generate Reply
-                                    </button>
-                                ` : `
-                                    <button disabled class="px-4 py-2 bg-slate-800 text-slate-500 rounded-lg text-sm font-medium cursor-not-allowed flex items-center gap-2">
-                                        <i class="fas fa-check"></i> Replied
-                                    </button>
-                                `}
-                                ${comment.reply && comment.status === 'pending' ? `
-                                    <button onclick="sendReply(${comment.id})" class="px-4 py-2 bg-green-500/10 hover:bg-green-500/20 text-green-400 rounded-lg text-sm font-medium transition-all flex items-center gap-2">
-                                        <i class="fas fa-paper-plane"></i> Send Reply
-                                    </button>
-                                ` : ''}
-                                <button onclick="deleteComment(${comment.id})" class="px-3 py-2 text-slate-500 hover:text-red-400 rounded-lg text-sm transition-all">
-                                    <i class="fas fa-trash-alt"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
+                return '<div class="comment-card bg-slate-900 border border-slate-800 rounded-xl p-4 md:p-6 ' + (comment.status === 'replied' ? 'opacity-75' : '') + '" id="comment-' + comment.id + '"><div class="flex items-start gap-3 md:gap-4"><img src="' + comment.avatar + '" alt="' + comment.user + '" class="comment-avatar w-10 h-10 md:w-12 md:h-12 rounded-full border-2 border-slate-700 flex-shrink-0"><div class="flex-1 min-w-0"><div class="flex flex-wrap items-center gap-2 mb-1"><h4 class="font-semibold text-white text-sm md:text-base">' + comment.user + '</h4><span class="text-[10px] md:text-xs text-slate-500">' + comment.time + '</span><span class="text-[10px] md:text-xs px-2 py-0.5 rounded-full ' + (comment.sentiment === 'positive' ? 'bg-green-500/20 text-green-400' : comment.sentiment === 'negative' ? 'bg-red-500/20 text-red-400' : 'bg-blue-500/20 text-blue-400') + '">' + comment.sentiment + '</span><span class="text-[10px] md:text-xs px-2 py-0.5 rounded-lg ' + (comment.status === 'replied' ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400') + ' ml-auto">' + (comment.status === 'replied' ? '<i class="fas fa-check mr-1"></i>Replied' : '<i class="fas fa-clock mr-1"></i>Pending') + '</span></div><p class="text-slate-300 text-sm mb-1 md:mb-2">' + comment.text + '</p><p class="text-[10px] md:text-xs text-slate-500 mb-2 md:mb-3">on: <span class="text-slate-400">' + comment.postTitle + '</span></p>' + replyBox + '<div class="flex flex-wrap items-center gap-2 md:gap-3">' + buttons + '</div></div></div></div>';
+            }).join('');
         }
 
         async function generateReply(commentId) {
             const comment = comments.find(c => c.id === commentId);
             if (!comment) return;
-
-            const btn = document.getElementById(`btn-gen-${commentId}`);
-            btn.innerHTML = '<div class="typing-indicator"><span>.</span><span>.</span><span>.</span></div> Generating...';
+            const btn = document.getElementById('btn-gen-' + commentId);
+            btn.innerHTML = '<div class="typing-indicator"><span>.</span><span>.</span><span>.</span></div> AI...';
             btn.disabled = true;
-
             try {
                 const reply = await generateAIReply(comment.text, comment.sentiment);
                 comment.reply = reply;
                 renderComments();
-                showToast('Reply generated successfully!', 'success');
+                showToast('Reply generated!', 'success');
             } catch (error) {
-                showToast('Failed to generate reply', 'error');
-                btn.innerHTML = '<i class="fas fa-magic"></i> Generate Reply';
+                showToast('Error: ' + error.message, 'error');
+                btn.innerHTML = '<i class="fas fa-magic"></i> Generate';
                 btn.disabled = false;
             }
         }
@@ -912,154 +773,94 @@ POST /{post-id}/comments
         function sendReply(commentId) {
             const comment = comments.find(c => c.id === commentId);
             if (!comment || !comment.reply) return;
-
             comment.status = 'replied';
-
-            // Add to history
-            replyHistory.unshift({
-                time: "Just now",
-                user: comment.user,
-                original: comment.text,
-                reply: comment.reply,
-                status: "sent"
-            });
-
+            replyHistory.unshift({ time: "Just now", user: comment.user, original: comment.text, reply: comment.reply, status: "sent" });
             updateStats();
             renderComments();
-            showToast('Reply sent successfully!', 'success');
+            showToast('Reply sent!', 'success');
         }
 
         async function autoReplyAll() {
             const pending = comments.filter(c => c.status === 'pending');
-            if (pending.length === 0) {
-                showToast('No pending comments to reply to!', 'warning');
-                return;
-            }
-
+            if (pending.length === 0) { showToast('No pending comments!', 'warning'); return; }
             const btn = document.getElementById('auto-reply-all-btn');
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
             btn.disabled = true;
-
             for (const comment of pending) {
                 const reply = await generateAIReply(comment.text, comment.sentiment);
                 comment.reply = reply;
                 comment.status = 'replied';
-
-                replyHistory.unshift({
-                    time: "Just now",
-                    user: comment.user,
-                    original: comment.text,
-                    reply: reply,
-                    status: "sent"
-                });
-
+                replyHistory.unshift({ time: "Just now", user: comment.user, original: comment.text, reply: reply, status: "sent" });
                 renderComments();
                 updateStats();
-                await new Promise(resolve => setTimeout(resolve, 500));
+                await new Promise(resolve => setTimeout(resolve, 400));
             }
-
             btn.innerHTML = '<i class="fas fa-magic"></i> Auto-Reply All';
             btn.disabled = false;
-            showToast(`Successfully replied to ${pending.length} comments!`, 'success');
+            showToast('Replied to ' + pending.length + ' comments!', 'success');
         }
 
         function deleteComment(commentId) {
-            if (!confirm('Are you sure you want to remove this comment from the list?')) return;
+            if (!confirm('Remove this comment?')) return;
             comments = comments.filter(c => c.id !== commentId);
             renderComments();
             updateStats();
-            showToast('Comment removed', 'success');
+            showToast('Removed', 'success');
         }
 
-        function filterComments() {
-            renderComments();
-        }
-
+        function filterComments() { renderComments(); }
         document.getElementById('search-comments').addEventListener('input', filterComments);
 
         function renderHistory() {
             const tbody = document.getElementById('history-table-body');
             const emptyState = document.getElementById('empty-history');
-
-            if (replyHistory.length === 0) {
-                tbody.innerHTML = '';
-                emptyState.classList.remove('hidden');
-                return;
-            }
-
+            if (replyHistory.length === 0) { tbody.innerHTML = ''; emptyState.classList.remove('hidden'); return; }
             emptyState.classList.add('hidden');
-            tbody.innerHTML = replyHistory.map(item => `
-                <tr class="hover:bg-slate-800/30 transition-colors">
-                    <td class="px-6 py-4 text-sm text-slate-400">${item.time}</td>
-                    <td class="px-6 py-4 text-sm font-medium text-white">${item.user}</td>
-                    <td class="px-6 py-4 text-sm text-slate-300 max-w-xs truncate">${item.original}</td>
-                    <td class="px-6 py-4 text-sm text-slate-300 max-w-xs truncate">${item.reply}</td>
-                    <td class="px-6 py-4">
-                        <span class="text-xs px-2 py-1 rounded-full ${item.status === 'sent' ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'}">
-                            ${item.status}
-                        </span>
-                    </td>
-                </tr>
-            `).join('');
+            tbody.innerHTML = replyHistory.map(item => '<tr class="hover:bg-slate-800/30 transition-colors"><td class="px-4 md:px-6 py-3 md:py-4 text-xs md:text-sm text-slate-400 whitespace-nowrap">' + item.time + '</td><td class="px-4 md:px-6 py-3 md:py-4 text-xs md:text-sm font-medium text-white">' + item.user + '</td><td class="px-4 md:px-6 py-3 md:py-4 text-xs md:text-sm text-slate-300 max-w-[150px] truncate">' + item.original + '</td><td class="px-4 md:px-6 py-3 md:py-4 text-xs md:text-sm text-slate-300 max-w-[150px] truncate">' + item.reply + '</td><td class="px-4 md:px-6 py-3 md:py-4"><span class="text-xs px-2 py-1 rounded-full ' + (item.status === 'sent' ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400') + '">' + item.status + '</span></td></tr>').join('');
         }
 
         function clearHistory() {
-            if (!confirm('Clear all reply history?')) return;
+            if (!confirm('Clear all history?')) return;
             replyHistory = [];
             renderHistory();
-            showToast('History cleared', 'success');
+            showToast('Cleared', 'success');
         }
 
         function updateStats() {
             const total = comments.length;
             const pending = comments.filter(c => c.status === 'pending').length;
             const replied = comments.filter(c => c.status === 'replied').length;
-
             document.getElementById('stat-total').textContent = total;
             document.getElementById('stat-pending').textContent = pending;
             document.getElementById('stat-replied').textContent = replied;
-            document.getElementById('pending-badge').textContent = pending;
-
+            document.getElementById('pending-badge-desktop').textContent = pending;
+            document.getElementById('pending-badge-mobile').textContent = pending;
             if (pending === 0) {
-                document.getElementById('pending-badge').classList.add('hidden');
+                document.getElementById('pending-badge-desktop').classList.add('hidden');
+                document.getElementById('pending-badge-mobile').classList.add('hidden');
             } else {
-                document.getElementById('pending-badge').classList.remove('hidden');
+                document.getElementById('pending-badge-desktop').classList.remove('hidden');
+                document.getElementById('pending-badge-mobile').classList.remove('hidden');
             }
         }
 
         function updateDashboard() {
             updateStats();
-
             const activityContainer = document.getElementById('recent-activity');
             const recent = replyHistory.slice(0, 5);
-
             if (recent.length === 0) {
                 activityContainer.innerHTML = '<p class="text-slate-500 text-sm">No recent activity</p>';
                 return;
             }
-
-            activityContainer.innerHTML = recent.map(item => `
-                <div class="flex items-start gap-3 p-3 bg-slate-800/30 rounded-lg slide-in">
-                    <div class="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center flex-shrink-0">
-                        <i class="fas fa-reply text-green-400 text-xs"></i>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <p class="text-sm text-slate-300">
-                            <span class="font-medium text-white">${item.user}</span> - Reply sent
-                        </p>
-                        <p class="text-xs text-slate-500 mt-0.5 truncate">${item.reply}</p>
-                    </div>
-                    <span class="text-xs text-slate-500 flex-shrink-0">${item.time}</span>
-                </div>
-            `).join('');
+            activityContainer.innerHTML = recent.map(item => '<div class="flex items-start gap-3 p-3 bg-slate-800/30 rounded-lg slide-in"><div class="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center flex-shrink-0"><i class="fas fa-reply text-green-400 text-xs"></i></div><div class="flex-1 min-w-0"><p class="text-sm text-slate-300"><span class="font-medium text-white">' + item.user + '</span> - Reply sent</p><p class="text-xs text-slate-500 mt-0.5 truncate">' + item.reply + '</p></div><span class="text-xs text-slate-500 flex-shrink-0">' + item.time + '</span></div>').join('');
         }
 
         function refreshComments() {
-            showToast('Refreshing comments...', 'info');
+            showToast('Refreshing...', 'info');
             setTimeout(() => {
                 renderComments();
                 updateStats();
-                showToast('Comments refreshed!', 'success');
+                showToast('Refreshed!', 'success');
             }, 1000);
         }
 
@@ -1071,28 +872,18 @@ POST /{post-id}/comments
             settings.cta = document.getElementById('cta-type').value;
             settings.apiKey = document.getElementById('api-key').value;
             settings.autoApprove = document.getElementById('auto-approve').checked;
-
-            showToast('Settings saved successfully!', 'success');
+            showToast('Settings saved!', 'success');
         }
 
-        function showToast(message, type = 'success') {
+        function showToast(message, type) {
             const toast = document.getElementById('toast');
             const toastIcon = document.getElementById('toast-icon');
             const toastMessage = document.getElementById('toast-message');
-
-            const icons = {
-                success: 'fa-check-circle text-green-400',
-                error: 'fa-times-circle text-red-400',
-                warning: 'fa-exclamation-triangle text-yellow-400',
-                info: 'fa-info-circle text-blue-400'
-            };
-
-            toastIcon.className = `fas ${icons[type] || icons.success}`;
+            const icons = { success: 'fa-check-circle text-green-400', error: 'fa-times-circle text-red-400', warning: 'fa-exclamation-triangle text-yellow-400', info: 'fa-info-circle text-blue-400' };
+            toastIcon.className = 'fas ' + (icons[type] || icons.success);
             toastMessage.textContent = message;
-
             toast.classList.remove('translate-y-20', 'opacity-0');
             toast.classList.add('translate-y-0', 'opacity-100');
-
             setTimeout(() => {
                 toast.classList.add('translate-y-20', 'opacity-0');
                 toast.classList.remove('translate-y-0', 'opacity-100');
@@ -1109,4 +900,4 @@ POST /{post-id}/comments
         });
     </script>
 </body>
-  </html>
+                    </html>
